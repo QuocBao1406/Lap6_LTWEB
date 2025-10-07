@@ -1,9 +1,14 @@
 <?php
-$task_list = filter_input(INPUT_POST, 'tasklist', FILTER_DEFAULT, 
-        FILTER_REQUIRE_ARRAY);
-if ($task_list === NULL) {
-    $task_list = array();
+$lifetime = 1 * 365 * 24 * 60 * 60; //1 year
+session_set_cookie_params($lifetime, '/');
+session_start();
+
+if (!isset($_SESSION['task_list'])) {
+    $_SESSION['task_list'] = array();
 }
+
+$task_list = $_SESSION['task_list'];
+
 $action = filter_input(INPUT_POST, 'action');
 $errors = array();
 
@@ -26,6 +31,8 @@ switch( $action ) {
         }
         break;
 }
+
+$_SESSION['task_list'] = $task_list;
 
 include('task_list.php');
 ?>

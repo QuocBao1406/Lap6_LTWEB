@@ -1,6 +1,6 @@
 <?php
 // Start session management with a persistent cookie
-$lifetime = 60 * 60 * 24 * 14;    // 2 weeks in seconds
+$lifetime = 3 * 365 * 24 * 60 * 60; //3 years
 session_set_cookie_params($lifetime, '/');
 session_start();
 
@@ -52,5 +52,25 @@ switch($action) {
         unset($_SESSION['cart12']);
         include('cart_view.php');
         break;
+    case 'end_session':
+        $_SESSION = array();
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+
+        session_destroy();
+
+        echo "<p><a href='index.php'>Start a new session</a></p>";
+
+        exit;
+        break;
 }
+
+echo "<p>Session ID: " . session_id() . "</p>";
 ?>
+
+<p><a href="?action=end_session">End Session</a></p>
